@@ -1,0 +1,37 @@
+
+NOMES: Fábio Gidião, Carlos Degar, Maurício de Carvalho
+
+O Grupo 4 desenvolverá uma Aplicação de Monitoramento de Rede e Hardware Hospedeiro, projetada para coletar, processar e exibir métricas críticas de desempenho de computadores e da conexão de internet 
+em tempo real. 
+
+A solução integra duas frentes principais:
+
+Monitoramento de Hardware (via psutil): Acompanhamento contínuo do uso de recursos locais essenciais (CPU, memória RAM e integridade/erros da placa de rede).
+
+Monitoramento de Desempenho de Rede (Inspirado no LibreSpeed): Execução de testes de velocidade e qualidade de conexão (download, upload, latência, jitter e perda de pacotes) com persistência histórica e análise estatística.
+
+
+Com base nas tecnologias sugeridas (psutil para hardware e conceitos do LibreSpeed para testes de rede), a lista de requisitos funcionais foi reorganizada, expandida e detalhada tecnicamente:
+
+1. Monitoramento de Hardware (Utilizando a biblioteca psutil)
+
+RF01 - Monitoramento de CPU: Coletar periodicamente a porcentagem de uso total da CPU, bem como o uso por núcleo.
+RF02 - Monitoramento de Memória: Medir o total de memória RAM instalada, a memória utilizada, a memória livre e a porcentagem de consumo atual.
+RF03 - Monitoramento de Erros na Placa de Rede: Capturar estatísticas de pacotes enviados/recebidos e, especificamente, erros de entrada/saída (errors in/out) e pacotes descartados (drops in/out) fornecidos pelas interfaces de rede do sistema operacional.
+
+2. Testes e Qualidade de Conexão (Inspirado no LibreSpeed)
+
+RF04 - Medição de Taxa de Download: Realizar testes de transferência de dados do servidor para o cliente para calcular a largura de banda de download em Mbps.
+RF05 - Medição de Taxa de Upload: Realizar testes de transferência de dados do cliente para o servidor para calcular a largura de banda de upload em Mbps.
+RF06 - Medição de Ping (Latência): Calcular o tempo de resposta (RTT - Round Trip Time) em milissegundos entre o cliente e o servidor de teste.
+RF07 - Medição de Jitter: Calcular a variação do atraso na entrega dos pacotes (jitter) em milissegundos para avaliar a estabilidade da conexão.
+
+3. Persistência e Inteligência de Dados
+
+RF08 - Armazenamento Histórico: Salvar todas as métricas coletadas de hardware e rede em um banco de dados relacional ou NoSQL para consulta posterior.
+RF09 - Geração de Dados Estatísticos: Calcular automaticamente valores máximos, mínimos e médias (diárias, semanais e mensais) para taxas de download, upload, ping, jitter e uso de hardware.
+RF10 - Identificação de Gargalos: Cruzar os dados históricos de desempenho com dias da semana e horários para apontar padrões de lentidão ou saturação na rede.
+
+4. Interface e Visualização
+
+RF11 - Dashboard em Tempo Real: Disponibilizar uma interface web interativa para exibir o consumo atual de CPU/memória, erros de rede e os resultados dos testes de velocidade de forma dinâmica.
