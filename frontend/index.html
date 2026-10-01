@@ -1,0 +1,629 @@
+
+<!DOCTYPE html>
+<html lang="PT-BR">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Network Monitoring Dashboard</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- =====================================
+         CABEÇALHO
+    ====================================== -->
+
+    <header class="main-header">
+
+        <div class="brand">
+            <div class="brand-icon">S</div>
+
+            <h1>SCAAR</h1>
+        </div>
+
+
+        <nav class="main-navigation">
+
+            <a href="#" class="active">Dashboard</a>
+
+            <a href="#">Histórico &amp; Análise</a>
+
+        </nav>
+
+
+        <div class="computer-information">
+
+            <strong>LAB-PC-2024</strong>
+
+            <span>Ubuntu 22.04 LTS</span>
+
+            <small>
+                Última atualização: 20/08/2026 14:35:22
+            </small>
+
+        </div>
+
+    </header>
+
+
+    <!-- =====================================
+         CONTEÚDO PRINCIPAL
+    ====================================== -->
+
+    <main class="dashboard-container">
+
+
+        <!-- =================================
+             CARTÕES DE RESUMO
+        ================================== -->
+
+        <section class="summary-cards">
+
+
+            <article class="summary-card">
+
+                <h2>USO DA CPU</h2>
+
+                <strong>42%</strong>
+
+                <p>8 núcleos</p>
+
+            </article>
+
+
+            <article class="summary-card">
+
+                <h2>USO DA RAM</h2>
+
+                <strong>78%</strong>
+
+                <p>12,5 / 16 GB</p>
+
+            </article>
+
+
+            <article class="summary-card">
+
+                <h2>VELOCIDADE DE DOWNLOAD</h2>
+
+                <strong>245 Mbps</strong>
+
+                <p>Último teste</p>
+
+            </article>
+
+
+            <article class="summary-card">
+
+                <h2>VELOCIDADE DE UPLOAD</h2>
+
+                <strong>85 Mbps</strong>
+
+                <p>Último teste</p>
+
+            </article>
+
+
+            <article class="summary-card">
+
+                <h2>PING / JITTER</h2>
+
+                <strong>18 ms / 3 ms</strong>
+
+                <p>Conexão estável</p>
+
+            </article>
+
+
+            <article class="summary-card">
+
+                <h2>STATUS DA REDE</h2>
+
+                <strong>ONLINE</strong>
+
+                <p>Todos os sistemas operacionais</p>
+
+            </article>
+
+        </section>
+
+
+        <!-- =================================
+             DUAS COLUNAS PRINCIPAIS
+        ================================== -->
+
+        <section class="dashboard-columns">
+
+
+            <!-- =================================
+                 COLUNA DE HARDWARE
+            ================================== -->
+
+            <div class="hardware-column">
+
+                <h2 class="section-title">
+                    Monitoramento de Hardware
+                </h2>
+
+
+                <!-- PROCESSADOR -->
+
+                <article class="monitor-card">
+
+                    <div class="card-header">
+
+                        <div>
+
+                            <h3>Processador (CPU)</h3>
+
+                            <p>Intel Core i7-12700K</p>
+
+                        </div>
+
+                        <span>
+                            8 núcleos / 16 threads
+                        </span>
+
+                    </div>
+
+
+                    <div class="cpu-monitoring">
+
+                        <div class="cpu-percentage">
+
+                            <div class="cpu-circle">
+                                42%
+                            </div>
+
+                            <span>Ativo</span>
+
+                        </div>
+
+
+                        <div class="usage-history">
+
+                            <h4>HISTÓRICO DE USO (60S)</h4>
+
+                            <div class="chart-placeholder">
+                                Gráfico de uso da CPU
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+
+                <!-- MEMÓRIA RAM -->
+
+                <article class="monitor-card">
+
+                    <div class="card-header">
+
+                        <h3>Memória do Sistema (RAM)</h3>
+
+                        <span>
+                            DDR4 Dual-Channel
+                        </span>
+
+                    </div>
+
+
+                    <div class="memory-information">
+
+                        <div class="metric-line">
+
+                            <span>
+                                12,5 GB usados / 16,0 GB total
+                            </span>
+
+                            <strong>78%</strong>
+
+                        </div>
+
+
+                        <div class="progress-bar">
+
+                            <div class="progress-value ram-progress">
+                            </div>
+
+                        </div>
+
+
+                        <div class="memory-details">
+
+                            <div>
+
+                                <span>DISPONÍVEL</span>
+
+                                <strong>3,5 GB</strong>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>CACHE / BUFFERS</span>
+
+                                <strong>1,8 GB</strong>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>ALOCAÇÃO DE SWAP</span>
+
+                                <strong>2,0 GB / 8,0 GB</strong>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+
+                <!-- ARMAZENAMENTO -->
+
+                <article class="monitor-card">
+
+                    <h3>
+                        Armazenamento e Partições
+                    </h3>
+
+
+                    <div class="storage-item">
+
+                        <div class="metric-line">
+
+                            <span>/ (raiz)</span>
+
+                            <strong>
+                                130 GB / 200 GB (65%)
+                            </strong>
+
+                        </div>
+
+
+                        <div class="progress-bar">
+
+                            <div class="progress-value root-progress">
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="storage-item">
+
+                        <div class="metric-line">
+
+                            <span>/home</span>
+
+                            <strong>
+                                215 GB / 500 GB (43%)
+                            </strong>
+
+                        </div>
+
+
+                        <div class="progress-bar">
+
+                            <div class="progress-value home-progress">
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+
+                <!-- TEMPERATURAS -->
+
+                <article class="monitor-card">
+
+                    <h3>
+                        Leituras de Temperatura
+                    </h3>
+
+
+                    <div class="temperature-item">
+
+                        <div class="metric-line">
+
+                            <span>Temperatura da CPU</span>
+
+                            <strong>62°C</strong>
+
+                        </div>
+
+
+                        <div class="progress-bar">
+
+                            <div class="progress-value cpu-temperature">
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="temperature-item">
+
+                        <div class="metric-line">
+
+                            <span>Temperatura da GPU</span>
+
+                            <strong>45°C</strong>
+
+                        </div>
+
+
+                        <div class="progress-bar">
+
+                            <div class="progress-value gpu-temperature">
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="temperature-item">
+
+                        <div class="metric-line">
+
+                            <span>Placa-mãe</span>
+
+                            <strong>38°C</strong>
+
+                        </div>
+
+
+                        <div class="progress-bar">
+
+                            <div class="progress-value motherboard-temperature">
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+            </div>
+
+
+            <!-- =================================
+                 COLUNA DE REDE
+            ================================== -->
+
+            <div class="network-column">
+
+                <h2 class="section-title">
+                    Monitoramento de Rede
+                </h2>
+
+
+                <!-- TESTE DE VELOCIDADE -->
+
+                <article class="monitor-card">
+
+                    <div class="card-header">
+
+                        <div>
+
+                            <h3>
+                                Último Teste de Velocidade
+                            </h3>
+
+                            <p>
+                                Servidor: speedtest.net — Nova York
+                            </p>
+
+                        </div>
+
+
+                        <span class="test-status">
+                            APROVADO
+                        </span>
+
+                    </div>
+
+
+                    <div class="network-metrics">
+
+                        <div>
+
+                            <span>DOWNLOAD</span>
+
+                            <strong>245 Mbps</strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>UPLOAD</span>
+
+                            <strong>85 Mbps</strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>PING</span>
+
+                            <strong>18 ms</strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>JITTER</span>
+
+                            <strong>3 ms</strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>PERDA DE PACOTES</span>
+
+                            <strong>0,1%</strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <button type="button" class="new-test-button">
+                        ↻ Executar novo teste
+                    </button>
+
+
+                    <div class="monitoring-controls">
+                        <button
+                            type="button"
+                            id="start-monitoring-button"
+                            class="new-test-button"
+                        >
+                            ▶ Iniciar monitoramento
+                        </button>
+                    
+                        <button
+                            type="button"
+                            id="pause-monitoring-button"
+                            disabled
+                        >
+                            ⏸ Pausar monitoramento
+                        </button>
+                    </div>
+
+                    <div class="monitoring-status">
+                        <span class="status-indicator"></span>
+                        <span id="monitoring-status-text">
+                            Monitoramento pausado
+                        </span>
+                    </div>
+
+                </article>
+
+
+                <!-- INTERFACE DE REDE -->
+
+                <article class="monitor-card">
+
+                    <div class="card-header">
+
+                        <div>
+
+                            <h3>
+                                Status da Interface de Rede
+                            </h3>
+
+                            <p>
+                                Ativa: eth0 (Ethernet)
+                            </p>
+
+                        </div>
+
+
+                        <strong>
+                            192.168.1.105
+                        </strong>
+
+                    </div>
+
+
+                    <table class="network-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>MÉTRICA</th>
+
+                                <th>VALOR</th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            <tr>
+
+                                <td>Pacotes enviados</td>
+
+                                <td>1.245.678</td>
+
+                            </tr>
+
+
+                            <tr>
+
+                                <td>Pacotes recebidos</td>
+
+                                <td>2.345.891</td>
+
+                            </tr>
+
+
+                            <tr>
+
+                                <td>Erros de entrada</td>
+
+                                <td>0</td>
+
+                            </tr>
+
+
+                            <tr>
+
+                                <td>Erros de saída</td>
+
+                                <td>2</td>
+
+                            </tr>
+
+
+                            <tr>
+
+                                <td>Pacotes descartados</td>
+
+                                <td>5</td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </article>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Médias de Monitoramento de Hardware</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f9;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .filter-form {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .filter-form input, .filter-form button {
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+        .filter-form button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .filter-form button:hover {
+            background-color: #0056b3;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 12px;
+            text-align: center;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Relatório de Médias de Hardware (Por Hora)</h2>
+    
+    <!-- Formulário de Filtro -->
+    <div class="filter-form">
+        <label for="dataInicio">Data Início:</label>
+        <input type="date" id="dataInicio" required>
+        
+        <label for="dataFim">Data Fim:</label>
+        <input type="date" id="dataFim" required>
+        
+        <button onclick="buscarDados()">Buscar</button>
+    </div>
+
+    <!-- Tabela de Resultados -->
+    <table>
+        <thead>
+            <tr>
+                <th>Data da Coleta</th>
+                <th>Hora do Dia</th>
+                <th>Média CPU (%)</th>
+                <th>Média Memória Usada (MB)</th>
+            </tr>
+        </thead>
+        <tbody id="tabelaDados">
+            <tr>
+                <td colspan="4">Selecione as datas e clique em buscar.</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    async function buscarDados() {
+        const dataInicio = document.getElementById('dataInicio').value;
+        const dataFim = document.getElementById('dataFim').value;
+        const tbody = document.getElementById('tabelaDados');
+
+        if (!dataInicio || !dataFim) {
+            alert("Por favor, selecione as datas de início e fim.");
+            return;
+        }
+
+        tbody.innerHTML = '<tr><td colspan="4">Carregando...</td></tr>';
+
+        try {
+            // Requisição apontando para o servidor Python rodando na porta 5000
+            const url = `http://127.0.0.1:5000/api/metricas?inicio=${dataInicio}&fim=${dataFim}`;
+            const response = await fetch(url);
+            
+            if (!response.ok) {
+                throw new Error('Erro ao buscar dados do servidor');
+            }
+
+            const dados = await response.json();
+            
+            tbody.innerHTML = ''; // Limpa a tabela
+
+            if (dados.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4">Nenhum dado encontrado para o período selecionado.</td></tr>';
+                return;
+            }
+
+            // Preenche a tabela iterando sobre a lista de médias gerada pelo backend
+            dados.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${item.data_da_coleta}</td>
+                    <td>${item.hora_do_dia}h</td>
+                    <td>${item.media_cpu}%</td>
+                    <td>${item.media_memoria} MB</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+        } catch (error) {
+            console.error('Erro:', error);
+            tbody.innerHTML = '<tr><td colspan="4" style="color: red;">Erro ao carregar dados. Verifique a conexão com o backend.</td></tr>';
+        }
+    }
+</script>
+
+</body>
+</html>
