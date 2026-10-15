@@ -10,3 +10,9 @@ O projeto está dividido em quatro módulos principais, em arquitetura Monorepo:
 * **/docs**: Diagramas, especificações de hardware, monografia e referências teóricas.
 
 ## Como iniciar o ambiente de desenvolvimento
+
+## Como rodar os testes
+ - Na máquina cliente devem estar instalados os scripts agente_colletor.py, database.py e models.py.
+  - rodar o script agente_colletor.py
+
+  
