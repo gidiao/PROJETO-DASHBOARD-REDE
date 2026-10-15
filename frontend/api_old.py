@@ -1,0 +1,91 @@
+from flask import Flask, jsonify, request
+from flask_cors import CORS
+from database import Database
+
+app = Flask(__name__)
+# O CORS é essencial para permitir que o frontend (HTML/JS) consuma a API
+CORS(app) 
+
+@app.route('/api/estado', methods=['GET'])
+def obter_estado():
+    db = Database()
+    db.conectar()
+    if not db.conexao:
+        return jsonify({"erro": "Falha na conexão com o banco"}), 500
+
+    cursor = db.conexao.cursor(dictionary=True)
+
+    try:
+        # Pega o host mais recente para o dashboard
+        cursor.execute("SELECT * FROM hosts ORDER BY id_host DESC LIMIT 1")
+        host = cursor.fetchone() or {}
+
+        hardware = {}
+        teste_rede = {}
+
+        if host:
+            id_host = host['id_host']
+            
+            # Última métrica de hardware coletada
+            cursor.execute("SELECT * FROM metricas_hardware WHERE id_host = %s ORDER BY data_hora_coleta DESC LIMIT 1", (id_host,))
+            hw = cursor.fetchone()
+            if hw:
+                hw['data_hora_coleta'] = str(hw['data_hora_coleta']) # Converte datetime para string
+                hardware = hw
+            
+            # Último teste de rede
+            cursor.execute("SELECT * FROM testes_rede WHERE id_host = %s ORDER BY data_hora_teste DESC LIMIT 1", (id_host,))
+            tr = cursor.fetchone()
+            if tr:
+                tr['data_hora_teste'] = str(tr['data_hora_teste'])
+                teste_rede = tr
+
+        return jsonify({
+            "online": bool(hardware),
+            "host": host,
+            "hardware": hardware,
+            "teste_rede": teste_rede
+        })
+
+    except Exception as e:
+        return jsonify({"erro": str(e)}), 500
+    finally:
+        cursor.close()
+        db.fechar()
+
+@app.route('/api/testes-rede', methods=['GET'])
+def testes_rede():
+    limite = request.args.get('limite', 100, type=int)
+    db = Database()
+    db.conectar()
+    if not db.conexao:
+        return jsonify({"erro": "Falha na conexão com o banco"}), 500
+
+    cursor = db.conexao.cursor(dictionary=True)
+    try:
+        # Traz os testes de rede e o nome da máquina (JOIN com tabela hosts)
+        # para popular a tabela do historico.html
+        sql = """
+            SELECT t.*, h.nome_maquina 
+            FROM testes_rede t
+            LEFT JOIN hosts h ON t.id_host = h.id_host
+            ORDER BY t.data_hora_teste DESC
+            LIMIT %s
+        """
+        cursor.execute(sql, (limite,))
+        resultados = cursor.fetchall()
+
+        # Formatando as datas para JSON
+        for row in resultados:
+            row['data_hora_teste'] = str(row['data_hora_teste'])
+
+        return jsonify(resultados)
+    except Exception as e:
+        return jsonify({"erro": str(e)}), 500
+    finally:
+        cursor.close()
+        db.fechar()
+
+if __name__ == '__main__':
+    # Roda a API exposta na rede local na porta 5000 (como definido no config.js)
+    app.run(host='0.0.0.0', port=5000, debug=True)

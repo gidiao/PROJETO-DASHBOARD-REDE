@@ -1,342 +1,151 @@
-
 /*
-=====================================
-    SELEÇÃO DOS ELEMENTOS HTML
-=====================================
-*/
+ * Dashboard SCAAR
+ * Os dados vêm da API Flask; este arquivo não gera métricas fictícias.
+ */
+const API_BASE_URL = (window.SCAAR_API_BASE_URL || "http://127.0.0.1:5000").replace(/\/$/, "");
 
-// Botão que executa o teste
+const byId = (id) => document.getElementById(id);
 const newTestButton = document.querySelector(".new-test-button");
-
-// Status geral da rede
-const networkStatus = document.querySelector(
-    ".summary-card:nth-child(6) strong"
-);
-
-// Texto abaixo do status da rede
-const networkStatusDescription = document.querySelector(
-    ".summary-card:nth-child(6) p"
-);
-
-// Status do teste de velocidade
-const testStatus = document.querySelector(".test-status");
-
-// Texto da última atualização
-const lastUpdated = document.querySelector(".computer-information small");
-
-// Cartões de resumo
-const summaryCards = document.querySelectorAll(".summary-card");
-
-// Elementos das métricas do teste de rede
-const networkMetrics = document.querySelectorAll(
-    ".network-metrics strong"
-);
-
-// Círculo de utilização da CPU
-const cpuCircle = document.querySelector(".cpu-circle");
-
-// Texto que indica se a CPU está ativa
-const cpuActivity = document.querySelector(".cpu-percentage span");
-
-// Porcentagem detalhada da memória RAM
-const ramPercentage = document.querySelector(
-    ".memory-information .metric-line strong"
-);
-
-// Texto detalhado do uso da memória
-const ramDescription = document.querySelector(
-    ".memory-information .metric-line span"
-);
-
-const startMonitoringButton = document.querySelector(
-    "#start-monitoring-button"
-);
-
-const pauseMonitoringButton = document.querySelector(
-    "#pause-monitoring-button"
-);
-
-const monitoringStatusText = document.querySelector(
-    "#monitoring-status-text"
-);
-
-const statusIndicator = document.querySelector(
-    ".status-indicator"
-);
+const startMonitoringButton = byId("start-monitoring-button");
+const pauseMonitoringButton = byId("pause-monitoring-button");
+const monitoringStatusText = byId("monitoring-status-text");
+const statusIndicator = document.querySelector(".status-indicator");
+const testStatus = byId("test-status");
 
 let monitoringInterval = null;
+let requestInProgress = false;
 
-
-/*
-=====================================
-    FUNÇÕES AUXILIARES
-=====================================
-*/
-
-// Gera um número aleatório entre dois valores
-function randomNumber(min, max) {
-
-    return Math.floor(
-        Math.random() * (max - min + 1)
-    ) + min;
-
+function numero(valor, casas = 1) {
+    if (valor === null || valor === undefined || valor === "") return "N/D";
+    const n = Number(valor);
+    return Number.isFinite(n)
+        ? n.toLocaleString("pt-BR", { minimumFractionDigits: 0, maximumFractionDigits: casas })
+        : "N/D";
 }
 
-
-// Atualiza o horário exibido no cabeçalho
-function updateLastUpdated() {
-
-    const now = new Date();
-
-    const formattedDate = now.toLocaleString("pt-BR");
-
-    lastUpdated.textContent =
-        `Última atualização: ${formattedDate}`;
-
+function dataHora(valor) {
+    if (!valor) return "Sem coleta registrada";
+    const data = new Date(String(valor).replace(" ", "T"));
+    if (Number.isNaN(data.getTime())) return String(valor);
+    return data.toLocaleString("pt-BR");
 }
 
-
-/*
-=====================================
-    ATUALIZAÇÃO DOS DADOS
-=====================================
-*/
-
-function updateDashboard() {
-
-    // Gera valores simulados
-    const cpu = randomNumber(20, 90);
-
-    const ram = randomNumber(40, 95);
-
-    const download = randomNumber(150, 500);
-
-    const upload = randomNumber(30, 150);
-
-    const ping = randomNumber(10, 60);
-
-    const jitter = randomNumber(1, 10);
-
-    const packetLoss = (Math.random() * 0.5).toFixed(1);
-
-
-    /*
-    ---------------------------------
-        ATUALIZA OS CARTÕES SUPERIORES
-    ---------------------------------
-    */
-
-    // Cartão da CPU
-    summaryCards[0].querySelector("strong").textContent =
-        `${cpu}%`;
-
-
-    // Cartão da RAM
-    summaryCards[1].querySelector("strong").textContent =
-        `${ram}%`;
-
-
-    // Cartão de download
-    summaryCards[2].querySelector("strong").textContent =
-        `${download} Mbps`;
-
-
-    // Cartão de upload
-    summaryCards[3].querySelector("strong").textContent =
-        `${upload} Mbps`;
-
-
-    // Cartão de ping e jitter
-    summaryCards[4].querySelector("strong").textContent =
-        `${ping} ms / ${jitter} ms`;
-
-
-    /*
-    ---------------------------------
-        ATUALIZA O STATUS DA REDE
-    ---------------------------------
-    */
-
-    networkStatus.textContent = "ONLINE";
-
-    networkStatusDescription.textContent =
-        "Todos os sistemas operacionais";
-
-
-    /*
-    ---------------------------------
-        ATUALIZA O TESTE DE VELOCIDADE
-    ---------------------------------
-    */
-
-    networkMetrics[0].textContent =
-        `${download} Mbps`;
-
-    networkMetrics[1].textContent =
-        `${upload} Mbps`;
-
-    networkMetrics[2].textContent =
-        `${ping} ms`;
-
-    networkMetrics[3].textContent =
-        `${jitter} ms`;
-
-    networkMetrics[4].textContent =
-        `${packetLoss}%`;
-
-
-    /*
-    ---------------------------------
-        ATUALIZA A CPU
-    ---------------------------------
-    */
-
-    cpuCircle.textContent = `${cpu}%`;
-
-    cpuActivity.textContent = "Ativo";
-
-
-    /*
-    ---------------------------------
-        ATUALIZA A MEMÓRIA RAM
-    ---------------------------------
-    */
-
-    ramPercentage.textContent = `${ram}%`;
-
-    ramDescription.textContent =
-        `${(ram * 16 / 100).toFixed(1)} GB usados / 16,0 GB total`;
-
-
-    /*
-    ---------------------------------
-        ATUALIZA O HORÁRIO
-    ---------------------------------
-    */
-
-    updateLastUpdated();
-
+function setText(id, value) {
+    const element = byId(id);
+    if (element) element.textContent = value;
 }
 
+function setWidth(selector, percentage) {
+    const element = document.querySelector(selector);
+    if (element) element.style.width = `${Math.max(0, Math.min(100, Number(percentage) || 0))}%`;
+}
 
-/*
-=====================================
-    EXECUÇÃO DO TESTE
-=====================================
-*/
+function setStatus(online, hasData) {
+    const status = byId("network-status");
+    if (status) status.textContent = online ? "ONLINE" : (hasData ? "SEM ATUALIZAÇÃO" : "SEM DADOS");
+    setText("network-status-description",
+        online ? "O agente está enviando dados recentes" :
+        (hasData ? "A última coleta está antiga; verifique o agente" : "Aguardando a primeira coleta do agente"));
+    if (statusIndicator) statusIndicator.style.backgroundColor = online ? "#22c55e" : "#9ca3af";
+}
 
-function runNetworkTest() {
+async function obterJSON(caminho) {
+    const response = await fetch(`${API_BASE_URL}${caminho}`, { cache: "no-store" });
+    const dados = await response.json().catch(() => ({}));
+    if (!response.ok) {
+        throw new Error(dados.detalhe || dados.erro || `Erro HTTP ${response.status}`);
+    }
+    return dados;
+}
 
-    // Desativa o botão durante a execução
-    newTestButton.disabled = true;
+async function updateDashboard() {
+    if (requestInProgress) return;
+    requestInProgress = true;
+    if (newTestButton) {
+        newTestButton.disabled = true;
+        newTestButton.textContent = "↻ Atualizando...";
+    }
 
-    newTestButton.textContent =
-        "↻ Teste em andamento...";
+    try {
+        const dados = await obterJSON("/api/estado");
+        const host = dados.host || {};
+        const hardware = dados.hardware || {};
+        const teste = dados.teste_rede || {};
 
+        const cpu = hardware.cpu_percentual;
+        const memoriaUsada = hardware.memoria_usada_mb;
+        const memoriaTotal = hardware.memoria_total_mb;
+        const ram = Number(memoriaTotal) > 0 ? Number(memoriaUsada) / Number(memoriaTotal) * 100 : null;
+        const ramUsadaGB = Number(memoriaUsada) / 1024;
+        const ramTotalGB = Number(memoriaTotal) / 1024;
 
-    // Atualiza os status para indicar que o teste começou
-    testStatus.textContent = "TESTANDO";
+        setText("host-name", host.nome_maquina || "Host sem nome");
+        setText("host-os", host.sistema_operacional || "Sistema operacional não informado");
+        setText("host-ip", host.endereco_ip || "IP não informado");
+        setText("last-updated", `Última coleta: ${dataHora(hardware.data_hora_coleta)}`);
 
-    networkStatus.textContent = "TESTANDO";
+        setText("summary-cpu", cpu == null ? "—" : `${numero(cpu)}%`);
+        setText("summary-ram", ram == null ? "—" : `${numero(ram)}%`);
+        setText("summary-ram-detail", memoriaTotal == null ? "Sem dados de memória" : `${numero(ramUsadaGB, 2)} / ${numero(ramTotalGB, 2)} GB`);
+        setText("cpu-circle", cpu == null ? "—" : `${numero(cpu)}%`);
+        setText("cpu-activity", dados.online ? "Ativo" : "Sem atualização");
+        setText("ram-description", memoriaTotal == null ? "Sem dados de memória" : `${numero(ramUsadaGB, 2)} GB usados / ${numero(ramTotalGB, 2)} GB total`);
+        setText("ram-percentage", ram == null ? "—" : `${numero(ram)}%`);
+        setWidth(".ram-progress", ram || 0);
 
-    networkStatusDescription.textContent =
-        "Teste de rede em andamento";
+        setText("summary-download", teste.download_mbps == null ? "—" : `${numero(teste.download_mbps)} Mbps`);
+        setText("summary-upload", teste.upload_mbps == null ? "—" : `${numero(teste.upload_mbps)} Mbps`);
+        setText("summary-ping-jitter", teste.ping_ms == null ? "—" : `${numero(teste.ping_ms)} ms / ${numero(teste.jitter_ms)} ms`);
+        setText("network-download", teste.download_mbps == null ? "—" : `${numero(teste.download_mbps)} Mbps`);
+        setText("network-upload", teste.upload_mbps == null ? "—" : `${numero(teste.upload_mbps)} Mbps`);
+        setText("network-ping", teste.ping_ms == null ? "—" : `${numero(teste.ping_ms)} ms`);
+        setText("network-jitter", teste.jitter_ms == null ? "N/D" : `${numero(teste.jitter_ms)} ms`);
+        setText("network-loss", teste.pacotes_descartados == null ? "N/D" : String(teste.pacotes_descartados));
+        setText("test-status", teste.id_teste_rede ? "CONCLUÍDO" : "SEM TESTE");
+        setText("speedtest-server", teste.data_hora_teste ? `Último teste: ${dataHora(teste.data_hora_teste)}` : "Nenhum teste de velocidade registrado");
+        setText("errors-in", hardware.erros_rede_in == null ? "—" : String(hardware.erros_rede_in));
+        setText("errors-out", hardware.erros_rede_out == null ? "—" : String(hardware.erros_rede_out));
+        setText("packets-loss-interface", teste.pacotes_descartados == null ? "N/D" : String(teste.pacotes_descartados));
 
-
-    /*
-    Simula o tempo necessário para realizar
-    um teste de rede.
-    */
-
-    setTimeout(function () {
-
-        // Atualiza os dados simulados
-        updateDashboard();
-
-
-        // Atualiza os status após o teste
-        testStatus.textContent = "APROVADO";
-
-        networkStatus.textContent = "ONLINE";
-
-        networkStatusDescription.textContent =
-            "Todos os sistemas operacionais";
-
-
-        // Reativa o botão
-        newTestButton.disabled = false;
-
-        newTestButton.textContent =
-            "↻ Executar novo teste";
-
-
-    }, 2000);
-
+        setStatus(Boolean(dados.online), hardware.data_hora_coleta != null);
+    } catch (error) {
+        console.error("Falha ao atualizar dashboard:", error);
+        setStatus(false, false);
+        setText("network-status-description", `Não foi possível acessar a API: ${error.message}`);
+        setText("test-status", "API INDISPONÍVEL");
+        if (monitoringStatusText) monitoringStatusText.textContent = "API indisponível";
+    } finally {
+        requestInProgress = false;
+        if (newTestButton) {
+            newTestButton.disabled = false;
+            newTestButton.textContent = "↻ Atualizar dados";
+        }
+    }
 }
 
 function startMonitoring() {
-    // Evita iniciar vários monitoramentos ao mesmo tempo
-    if (monitoringInterval !== null) {
-        return;
-    }
-
-    // Executa um teste imediatamente
-    runNetworkTest();
-
-    // Executa um novo teste a cada 10 segundos
-    monitoringInterval = setInterval(() => {
-        runNetworkTest();
-    }, 10000);
-
-    // Atualiza o estado dos botões
-    startMonitoringButton.disabled = true;
-    pauseMonitoringButton.disabled = false;
-
-    monitoringStatusText.textContent = "Monitoramento ativo";
-    statusIndicator.style.backgroundColor = "#22c55e";
-
-    console.log("Monitoramento iniciado");
+    if (monitoringInterval !== null) return;
+    updateDashboard();
+    monitoringInterval = window.setInterval(updateDashboard, 10000);
+    if (startMonitoringButton) startMonitoringButton.disabled = true;
+    if (pauseMonitoringButton) pauseMonitoringButton.disabled = false;
+    if (monitoringStatusText) monitoringStatusText.textContent = "Atualização automática ativa";
+    if (statusIndicator) statusIndicator.style.backgroundColor = "#22c55e";
 }
 
 function pauseMonitoring() {
-    // Verifica se existe um monitoramento ativo
-    if (monitoringInterval === null) {
-        return;
-    }
-
-    // Interrompe a execução automática
-    clearInterval(monitoringInterval);
-
-    // Limpa o identificador do intervalo
+    if (monitoringInterval === null) return;
+    window.clearInterval(monitoringInterval);
     monitoringInterval = null;
-
-    // Atualiza o estado dos botões
-    startMonitoringButton.disabled = false;
-    pauseMonitoringButton.disabled = true;
-
-    monitoringStatusText.textContent = "Monitoramento pausado";
-    statusIndicator.style.backgroundColor = "#9ca3af";
-
-    console.log("Monitoramento pausado");
+    if (startMonitoringButton) startMonitoringButton.disabled = false;
+    if (pauseMonitoringButton) pauseMonitoringButton.disabled = true;
+    if (monitoringStatusText) monitoringStatusText.textContent = "Atualização automática pausada";
+    if (statusIndicator) statusIndicator.style.backgroundColor = "#9ca3af";
 }
-/*
-=====================================
-    EVENTO DO BOTÃO
-=====================================
-*/
 
-// Executa a função quando o botão for clicado
-newTestButton.addEventListener(
-    "click",
-    runNetworkTest
-);
+if (newTestButton) newTestButton.addEventListener("click", updateDashboard);
+if (startMonitoringButton) startMonitoringButton.addEventListener("click", startMonitoring);
+if (pauseMonitoringButton) pauseMonitoringButton.addEventListener("click", pauseMonitoring);
 
-startMonitoringButton.addEventListener(
-    "click",
-    startMonitoring
-);
-
-pauseMonitoringButton.addEventListener(
-    "click",
-    pauseMonitoring
-);
+if (pauseMonitoringButton) pauseMonitoringButton.disabled = true;
+updateDashboard();

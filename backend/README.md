@@ -1,21 +1,26 @@
-Markdown
-# Agente de Monitoramento de Hardware e Rede
+# SCAAR - SISTEMA CENTRALIZADO DE COLETA E ANÁLISE DE REDE
 
-Este projeto é um agente escrito em Python que coleta métricas de hardware (CPU e Memória) e realiza testes periódicos de velocidade de internet (Ping, Download, Upload), salvando todo o histórico em um banco de dados MySQL/MariaDB centralizado (como uma Raspberry Pi).
+Este repositório contém a infraestrutura completa para o projeto de coleta, armazenamento e visualização de dados de uma rede. A aplicação trabalha em um sistema cliente-servidor onde o cliente é uma aplicação chamada de agente que faz coletas contínuas de informações do hardware e da rede e envia estas informações para o servidor onde serão feitas análises e a geração do dashboard de visualização dos resultados
 
-## 🚀 Funcionalidades
+## Arquitetura do Projeto
+O projeto está dividido em quatro módulos principais, em arquitetura Monorepo
 
-- **Identificação Automática:** Registra a máquina no banco de dados capturando Hostname, Sistema Operacional, Endereço IP local e Endereço MAC físico.
-- **Monitoramento Contínuo de Hardware:** A cada 5 segundos, coleta e envia o uso percentual da CPU e o consumo de memória RAM (Total e Usada) via `psutil`.
-- **Testes de Conectividade Inteligentes:** A cada 30 segundos (configurável), executa um teste de velocidade da internet usando a infraestrutura do Speedtest.
-- **Tolerância a Falhas:** Caso o teste de rede falhe ou fique sem internet, o script isola o erro e continua monitorando o hardware ininterruptamente.
+* **/backend**: Scripts Python estruturados para operar nas duas pontas do sistema (cliente e servidor).
+  * **Agente Coletor (`agente_coletor.py`)**: Script que roda na máquina cliente, recolhendo dados de forma contínua e enviando para o servidor MariaDB remoto[cite: 10]. Desenvolvido com padrão arquitetural MVC (Model-View-Controller) e injeção de dependências para separar a lógica de negócio das conexões de base de dados. As suas principais funcionalidades incluem:
+    * **Identificação Automática:** Registo do Hostname, Sistema Operacional, IP Local e Endereço MAC.
+    * **Métricas de Hardware:** Monitorização do uso de CPU (%) e memória RAM (Total e Usada) em intervalos curtos.
+    * **Testes de Conectividade:** Medição de latência (Ping), velocidade de Download e Upload de forma assíncrona.
+  * **API Web (`api.py`)**: Script em Python rodando no servidor (usando o framework Flask) focado na análise dos dados e na entrega das métricas consolidadas em formato JSON para o frontend
 
-## 📋 Pré-requisitos
+* **/database**: Banco MariaDB responsável pelo armazenamento das informações enviadas pelo script agente
 
-- Python 3.7 ou superior.
-- Um servidor MySQL ou MariaDB rodando na rede (ex: em uma Raspberry Pi).
+* **/frontend**: Interface web para visualização dos dados em tempo real
 
-## 🔧 Instalação e Configuração
+* **/docs**: Diagramas, especificações de hardware, monografia e referências teóricas
 
-
+## Dependências do Backend (Agente Coletor)
+Para o correto funcionamento do arquivo `agente_coletor.py` nas máquinas clientes, o ambiente Python requer a instalação das seguintes bibliotecas externas:
+- `psutil` (Para extração dos dados físicos de CPU e Memória)
+- `speedtest-cli` (Para testes de taxa de transferência de rede)
+- `mysql-connector-python` (Driver para comunicação e inserção de dados no MariaDB)
 
