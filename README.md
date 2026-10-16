@@ -36,7 +36,7 @@ scaar/
 │   ├── agente_coletor.py    
 │   ├── api.py               
 │   ├── database.py          
-│   └── models/              
+│   └── models.py             
 ├── database/                # Scripts SQL
 │   └── schema.sql           
 ├── frontend/                # Arquivos do site
