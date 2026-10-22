@@ -38,6 +38,8 @@ Armazena o histórico periódico de utilização dos recursos de hardware (como 
 | `memoria_total_mb` | DOUBLE | NOT NULL | Capacidade total de memória RAM em MB. |
 | `memoria_usada_mb` | DOUBLE | NOT NULL | Quantidade de memória RAM em uso em MB. |
 | `data_hora_coleta` | DATETIME | NOT NULL | Timestamp local da estação no momento da captura. |
+| `pacotes_enviados` | BIGINT | DEFAULT 0 | Total de pacotes de rede enviados acumulados. |
+| `pacotes_recebidos` | BIGINT | DEFAULT 0 | Total de pacotes de rede recebidos acumulados. |
 
 ---
 
